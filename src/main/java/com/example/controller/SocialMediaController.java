@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
 import com.example.service.AccountService;
 import com.example.service.MessageService;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 //import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.example.entity.Account;
 import com.example.entity.Message;
@@ -36,9 +37,10 @@ public class SocialMediaController {
         return ResponseEntity.status(200).body(allMessages);
     }
 
-    @GetMapping("/messages/{message_id}")
-    public ResponseEntity<Message> getMessageById(@PathVariable("message_id") Integer message_id){
-        Message message = messageService.getMessageById(message_id);
+    //As a user, I should be able to submit a GET request on the endpoint GET localhost:8080/messages/{messageId}
+    @GetMapping("/messages/{messageId}")
+    public ResponseEntity<Message> getMessageById(@PathVariable("messageId") Integer messageId){
+        Message message = messageService.getMessageById(messageId);
         if(message!=null)
             return ResponseEntity.status(200).body(message);//message retrieved successfully
         else
@@ -46,16 +48,16 @@ public class SocialMediaController {
     }
 
     //As a user, I should be able to submit a GET request on the endpoint GET localhost:8080/accounts/{accountId}/messages
-    @GetMapping("/accounts/{account_id}/messages")
-    public ResponseEntity<List<Message>> getAllMessagesByAccountId(@PathVariable("account_id") Integer account_id){
-        List<Message> messages = messageService.getAllMessagesByAccountId(account_id);
+    @GetMapping("/accounts/{accountId}/messages")
+    public ResponseEntity<List<Message>> getAllMessagesByAccountId(@PathVariable("accountId") Integer accountId){
+        List<Message> messages = messageService.getAllMessagesByAccountId(accountId);
         return ResponseEntity.status(200).body(messages);
     }
 
     //As a User, I should be able to submit a DELETE request on the endpoint DELETE localhost:8080/messages/{messageId}
-    @DeleteMapping("/messages/{message_id}")
-    public ResponseEntity<Message> deleteMessageById(@PathVariable("message_id") Integer message_id){
-        Message message = messageService.deleteMessageById(message_id);
+    @DeleteMapping("/messages/{messageId}")
+    public ResponseEntity<Message> deleteMessageById(@PathVariable("messageId") Integer messageId){
+        Message message = messageService.deleteMessageById(messageId);
         if(message!=null)
             return ResponseEntity.status(200).body(message);//message deleted
         else
@@ -73,9 +75,9 @@ public class SocialMediaController {
     }
 
     //As a user, I should be able to submit a PATCH request on the endpoint PATCH localhost:8080/messages/{messageId}
-    @PatchMapping("/messages/{message_id}")
-    public ResponseEntity<Message> updateMessageById(@PathVariable("message_id") Integer message_id, @RequestBody Message updateMessage){
-        Message message = messageService.updateMessageById(message_id,updateMessage);
+    @PatchMapping("/messages/{messageId}")
+    public ResponseEntity<Message> updateMessageById(@PathVariable("messageId") Integer messageId, @RequestBody Message updateMessage){
+        Message message = messageService.updateMessageById(messageId,updateMessage);
         if(message!=null && message.getMessageText()!=null)
             return ResponseEntity.status(200).body(message);//message updated
         else
