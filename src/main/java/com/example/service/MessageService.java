@@ -28,12 +28,19 @@ public class MessageService {
         return null;
     }
 
+    public List<Message> getAllMessagesByAccountId(Integer account_id){
+        return messageRepository.findMessagesByPostedBy(account_id);
+
+    }
+
     public Message deleteMessageById(Integer message_id){
+    
        Optional<Message> optionalMessage = messageRepository.findById(message_id);
        if(optionalMessage.isPresent())
        {
-        messageRepository.delete(optionalMessage.get());
-        return optionalMessage.get();
+        Message message = optionalMessage.get();
+        messageRepository.deleteById(message_id);
+        return message;
        }
        return null;
     }
@@ -42,8 +49,7 @@ public class MessageService {
         if(newMessage.getMessageText()!="" && newMessage.getMessageText()!=null && newMessage.getMessageText().length()<=255){
             Optional<Account> optionalAccount = accountRepository.findById(newMessage.getPostedBy());
             if(optionalAccount.isPresent()){
-                Message message = messageRepository.save(newMessage);
-                return message;
+                return messageRepository.save(newMessage);
             }
         }
         return null;
@@ -56,8 +62,7 @@ public class MessageService {
             if(optionalMessage.isPresent()){
                 Message message = optionalMessage.get();
                 message.setMessageText(updateMessage.getMessageText());
-                messageRepository.save(message);
-                return message;
+                return messageRepository.save(message);
             }
         }
         return null;

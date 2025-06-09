@@ -16,13 +16,20 @@ public class AccountService {
     
 
     public Account saveAccount(Account newAccount){
-        Account account = accountRepository.save(newAccount);
-        return account;
+        if(newAccount.getUsername()!="" && newAccount.getUsername()!=null && newAccount.getPassword().length()>=4)
+        {
+            Account account = accountRepository.save(newAccount);
+            return account;
+        }
+        return null;
     }
-/* 
+
     public Account loginAccount(Account loginAccount){
-        Account account = accountRepository.findAccountByUserNameAndPassword(loginAccount.getUsername(),loginAccount.getPassword()).get();
+        Account account = accountRepository.findAccountByUsernameAndPassword(loginAccount.getUsername(),loginAccount.getPassword());
+       if(account!=null)
         return account;
+        else
+        return null;
     }
-   */ 
+   
 }
