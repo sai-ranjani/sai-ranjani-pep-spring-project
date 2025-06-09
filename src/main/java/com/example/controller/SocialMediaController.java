@@ -56,10 +56,10 @@ public class SocialMediaController {
 
     //As a User, I should be able to submit a DELETE request on the endpoint DELETE localhost:8080/messages/{messageId}
     @DeleteMapping("/messages/{messageId}")
-    public ResponseEntity<Message> deleteMessageById(@PathVariable("messageId") Integer messageId){
+    public ResponseEntity<Integer> deleteMessageById(@PathVariable("messageId") Integer messageId){
         Message message = messageService.deleteMessageById(messageId);
         if(message!=null)
-            return ResponseEntity.status(200).body(message);//message deleted
+            return ResponseEntity.status(200).body(1);//message deleted
         else
             return ResponseEntity.status(200).build();//message could not be deleted
     }
@@ -76,10 +76,10 @@ public class SocialMediaController {
 
     //As a user, I should be able to submit a PATCH request on the endpoint PATCH localhost:8080/messages/{messageId}
     @PatchMapping("/messages/{messageId}")
-    public ResponseEntity<Message> updateMessageById(@PathVariable("messageId") Integer messageId, @RequestBody Message updateMessage){
+    public ResponseEntity<Integer> updateMessageById(@PathVariable("messageId") Integer messageId, @RequestBody Message updateMessage){
         Message message = messageService.updateMessageById(messageId,updateMessage);
         if(message!=null && message.getMessageText()!=null)
-            return ResponseEntity.status(200).body(message);//message updated
+            return ResponseEntity.status(200).body(1);//message updated
         else
             return ResponseEntity.status(400).build();//message could not be updated
     }
