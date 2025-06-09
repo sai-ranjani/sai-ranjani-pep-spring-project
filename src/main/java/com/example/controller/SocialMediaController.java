@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
 import com.example.service.AccountService;
 import com.example.service.MessageService;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
-//import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.example.entity.Account;
 import com.example.entity.Message;
 import java.util.List;
@@ -50,15 +48,15 @@ public class SocialMediaController {
     //As a user, I should be able to submit a GET request on the endpoint GET localhost:8080/accounts/{accountId}/messages
     @GetMapping("/accounts/{accountId}/messages")
     public ResponseEntity<List<Message>> getAllMessagesByAccountId(@PathVariable("accountId") Integer accountId){
-        List<Message> messages = messageService.getAllMessagesByAccountId(accountId);
-        return ResponseEntity.status(200).body(messages);
+        List<Message> messagesByAccountId = messageService.getAllMessagesByAccountId(accountId);
+        return ResponseEntity.status(200).body(messagesByAccountId);
     }
 
     //As a User, I should be able to submit a DELETE request on the endpoint DELETE localhost:8080/messages/{messageId}
     @DeleteMapping("/messages/{messageId}")
     public ResponseEntity<Integer> deleteMessageById(@PathVariable("messageId") Integer messageId){
-        Message message = messageService.deleteMessageById(messageId);
-        if(message!=null)
+        boolean deleted = messageService.deleteMessageById(messageId);
+        if(deleted)
             return ResponseEntity.status(200).body(1);//message deleted
         else
             return ResponseEntity.status(200).build();//message could not be deleted
@@ -67,18 +65,19 @@ public class SocialMediaController {
     //As a user, I should be able to submit a new post on the endpoint POST localhost:8080/messages
     @PostMapping("/messages")
     public ResponseEntity<Message> saveMessage(@RequestBody Message newMessage){
-        Message message = messageService.saveMessage(newMessage);
-        if(message!=null)
-            return ResponseEntity.status(200).body(message);//message created
+        Message savedMessage = messageService.saveMessage(newMessage);
+        if(savedMessage!=null)
+            return ResponseEntity.status(200).body(savedMessage);//message created
         else
             return ResponseEntity.status(400).build();//message creation failed
     }
 
     //As a user, I should be able to submit a PATCH request on the endpoint PATCH localhost:8080/messages/{messageId}
     @PatchMapping("/messages/{messageId}")
-    public ResponseEntity<Integer> updateMessageById(@PathVariable("messageId") Integer messageId, @RequestBody Message updateMessage){
-        Message message = messageService.updateMessageById(messageId,updateMessage);
-        if(message!=null && message.getMessageText()!=null)
+    public ResponseEntity<Integer> updateMessageById(
+        @PathVariable("messageId") Integer messageId, @RequestBody Message updateMessage){
+        boolean updated = messageService.updateMessageById(messageId,updateMessage);
+        if(updated)
             return ResponseEntity.status(200).body(1);//message updated
         else
             return ResponseEntity.status(400).build();//message could not be updated
@@ -91,9 +90,9 @@ public class SocialMediaController {
         if(existingAccount!=null)
             return ResponseEntity.status(409).build();//duplicate account
         else{
-            Account persistedAccount = accountService.saveAccount(newAccount);
-            if(persistedAccount!=null)
-                return ResponseEntity.status(200).body(persistedAccount);//account created
+            Account savedAccount = accountService.saveAccount(newAccount);
+            if(savedAccount!=null)
+                return ResponseEntity.status(200).body(savedAccount);//account created
         }
         return ResponseEntity.status(400).build();//account creation failed
     }
@@ -101,9 +100,9 @@ public class SocialMediaController {
     //As a user, I should be able to verify my login on the endpoint POST localhost:8080/login
     @PostMapping("/login")
     public ResponseEntity<Account> loginAccount(@RequestBody Account loginAccount){
-        Account account = accountService.loginAccount(loginAccount);
-        if(account!=null)
-            return ResponseEntity.status(200).body(account);//login successful
+        Account verifiedAccount = accountService.loginAccount(loginAccount);
+        if(verifiedAccount!=null)
+            return ResponseEntity.status(200).body(verifiedAccount);//login successful
         else
             return ResponseEntity.status(401).build();//unauthorized
     }

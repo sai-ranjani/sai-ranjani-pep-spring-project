@@ -41,23 +41,21 @@ public class MessageService {
     }
 
     //delete a message identified by messageId
-    public Message deleteMessageById(Integer messageId){
-    
-       Optional<Message> optionalMessage = messageRepository.findById(messageId);
-       if(optionalMessage.isPresent())
+    public boolean deleteMessageById(Integer messageId){
+       if(messageRepository.existsById(messageId))
        {
-            Message message = optionalMessage.get();
             messageRepository.deleteById(messageId);
-            return message;
+            return true;
        }
-       return null;
+       return false;
     }
 
     //save a new message
     public Message saveMessage(Message newMessage){
         /*The creation of the message will be successful if and only if the messageText is not blank, 
         is not over 255 characters, and postedBy refers to a real, existing user */
-        if(newMessage.getMessageText()!="" && newMessage.getMessageText()!=null && newMessage.getMessageText().length()<=255){
+        if(newMessage.getMessageText()!="" && newMessage.getMessageText()!=null && 
+        newMessage.getMessageText().length()<=255){
             Optional<Account> optionalAccount = accountRepository.findById(newMessage.getPostedBy());
             if(optionalAccount.isPresent()){
                 return messageRepository.save(newMessage);
@@ -67,19 +65,22 @@ public class MessageService {
     }
 
     //update a existing message
-    public Message updateMessageById(Integer messageId,Message updateMessage){
+    public boolean updateMessageById(Integer messageId,Message updateMessage){
         /*The update of a message should be successful if and only if 
         the message id already exists and the new messageText is not blank and is not over 255 characters */
-        if(updateMessage.getMessageText()!="" && updateMessage.getMessageText()!=null && updateMessage.getMessageText().length()<=255){
+        if(updateMessage.getMessageText()!="" && updateMessage.getMessageText()!=null && 
+        updateMessage.getMessageText().length()<=255){
 
             Optional<Message> optionalMessage = messageRepository.findById(messageId);
             if(optionalMessage.isPresent()){
-                Message message = optionalMessage.get();
-                message.setMessageText(updateMessage.getMessageText());
-                return messageRepository.save(message);
+                Message existingMessage = optionalMessage.get();
+                existingMessage.setMessageText(updateMessage.getMessageText());
+                Message savedMessage = messageRepository.save(existingMessage);
+                if(savedMessage!=null)
+                    return true;
             }
         }
-        return null;
+        return false;
     }
 
 }
